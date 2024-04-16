@@ -1,6 +1,7 @@
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
+using System.Collections.Generic;
 
 public class Grid : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class Grid : MonoBehaviour
     void Start()
     {
         LoadLevelFromJson();
-        RenderLevel();
+        //RenderLevel();
     }
 
     // Load level data from JSON file
@@ -23,7 +24,7 @@ public class Grid : MonoBehaviour
         LevelData levelData = JsonConvert.DeserializeObject<LevelData>(json);
         terrainGrid = levelData.TerrainGrid;
     }
-
+    /*
     // Render the level based on the tile types
     private void RenderLevel()
     {
@@ -81,6 +82,7 @@ public class Grid : MonoBehaviour
             newTable.transform.rotation = Quaternion.Euler(0, 90, 0); // Horizontal placement
         }
     }
+    */
 }
 
 // Class to deserialize JSON level data
@@ -89,3 +91,9 @@ public class LevelData
 {
     public int[,] TerrainGrid;
 }
+
+public class TerrainGrid
+{
+    public List<object> Terraingrid { get; set; }
+}
+
