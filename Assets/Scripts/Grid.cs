@@ -1,89 +1,116 @@
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
-using System.Collections.Generic;
 
-public class Grid : MonoBehaviour
+public class LevelLoader : MonoBehaviour
 {
-    public GameObject[] tilePrefabs; // Prefabs for different tile types
-    public GameObject tablePrefab;   // Prefab for the table
-    public string levelFilePath;     // Path to the JSON level file
+    public string jsonFilePath = "Assets/Resources/data.json"; // Path to your JSON file
+    public GameObject[] tilePrefabs; // Array of tile prefabs (Dirt, Grass, Stone, Wood)
+    public GameObject tablePrefab;
 
-    private List<List<int>> terrainGrid; // List of lists to store the tile types
+    private TileType[,] terrainGrid;
 
-    void Start()
+    private void Start()
     {
-        LoadLevelFromJson();
+        
+        LoadLevel(jsonFilePath);
         RenderLevel();
     }
 
-    // Load level data from JSON file
-    private void LoadLevelFromJson()
+    private void LoadLevel(string filePath)
     {
-        string json = File.ReadAllText(levelFilePath);
-        dynamic jsonData = JsonConvert.DeserializeObject(json);
-        dynamic gridData = jsonData.TerrainGrid.ToObject<List<List<int>>>();//JsonConvert.DeserializeObject<List<List<int>>>(jsonData["TerrainGrid"].ToString());
+        string jsonString = File.ReadAllText(filePath);
+        LevelData levelData = JsonConvert.DeserializeObject<LevelData>(jsonString);
+        terrainGrid = new TileType[levelData.TerrainGrid.GetLength(0), levelData.TerrainGrid.GetLength(1)];
 
-        terrainGrid = gridData.ToObject<List<List<int>>>();
-    }
-
-    // Render the level based on the tile types
-    private void RenderLevel()
-    {
-        for (int x = 0; x < terrainGrid.Count; x++)
+        for (int i = 0; i < levelData.TerrainGrid.GetLength(0); i++)
         {
-            for (int y = 0; y < terrainGrid[x].Count; y++)
+            for (int j = 0; j < levelData.TerrainGrid.GetLength(1); j++)
             {
-                int tileType = terrainGrid[x][y];
-                GameObject tilePrefab = tilePrefabs[tileType];
-                Instantiate(tilePrefab, new Vector3(x, 0, y), Quaternion.identity);
+                terrainGrid[i, j] = (TileType)levelData.TerrainGrid[i, j].TileType;
             }
         }
     }
 
-    // Handle mouse click for table placement
-    void Update()
+    private void RenderLevel()
+    {
+        for (int i = 0; i < terrainGrid.GetLength(0); i++)
+        {
+            for (int j = 0; j < terrainGrid.GetLength(1); j++)
+            {
+                Vector3 position = GridToWorldPosition(i, j);
+                GameObject tilePrefab = tilePrefabs[(int)terrainGrid[i, j]];
+                Instantiate(tilePrefab, position, Quaternion.identity);
+            }
+        }
+    }
+
+    private Vector3 GridToWorldPosition(int x, int y)
+    {
+        // Convert grid coordinates to world position
+        // You need to implement this based on your isometric grid layout
+        // This is just a placeholder implementation
+        return new Vector3(x, y, 0);
+    }
+
+    private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit))
-            {
-                int gridX = Mathf.FloorToInt(hit.point.x);
-                int gridZ = Mathf.FloorToInt(hit.point.z);
+            Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2Int gridPosition = ConvertToGridPosition(clickPosition);
 
-                if (IsValidTablePosition(gridX, gridZ))
-                {
-                    PlaceTable(gridX, gridZ);
-                }
+            if (IsValidWoodTile(gridPosition) && HasSpaceForTable(gridPosition))
+            {
+                PlaceTable(gridPosition);
             }
         }
     }
 
-    // Check if the table can be placed at the given grid coordinates
-    private bool IsValidTablePosition(int x, int z)
+    private bool IsValidWoodTile(Vector2Int gridPosition)
     {
-        if (x + 1 < terrainGrid.Count && terrainGrid[x + 1][z] == 4)
-        {
-            return true; // Horizontal placement
-        }
-        else if (z + 1 < terrainGrid[x].Count && terrainGrid[x][z + 1] == 4)
-        {
-            return true; // Vertical placement
-        }
-        return false;
+        return terrainGrid[gridPosition.x, gridPosition.y] == TileType.Wood;
     }
 
-    // Place the table at the given grid coordinates
-    private void PlaceTable(int x, int z)
+    private bool HasSpaceForTable(Vector2Int gridPosition)
     {
-        GameObject newTable = Instantiate(tablePrefab, new Vector3(x + 0.5f, 0, z + 0.5f), Quaternion.identity);
-        if (x + 1 < terrainGrid.Count && terrainGrid[x + 1][z] == 4)
-        {
-            newTable.transform.rotation = Quaternion.Euler(0, 90, 0); // Horizontal placement
-        }
+        // Check if there is enough space for the table at gridPosition
+        // You need to implement this based on your grid layout
+        return true; // Placeholder return value
     }
 
+    private void PlaceTable(Vector2Int gridPosition)
+    {
+        Vector3 tablePosition = GridToWorldPosition(gridPosition.x, gridPosition.y);
+        GameObject newTable = Instantiate(tablePrefab, tablePosition, Quaternion.identity);
+        // Optionally, you can store placed tables in a list for further manipulation
+    }
 
+    private Vector2Int ConvertToGridPosition(Vector3 position)
+    {
+        // Convert world position to grid coordinates
+        // You need to implement this based on your isometric grid layout
+        // This is just a placeholder implementation
+        return new Vector2Int((int)position.x, (int)position.z);
+    }
+}
+
+public enum TileType
+{
+    Dirt = 0,
+    Grass = 1,
+    Stone = 3,
+    Wood = 4
+}
+
+[System.Serializable]
+public class LevelData
+{
+    public GridCellData[,] TerrainGrid;
+}
+
+[System.Serializable]
+public class GridCellData
+{
+    public int TileType;
 }

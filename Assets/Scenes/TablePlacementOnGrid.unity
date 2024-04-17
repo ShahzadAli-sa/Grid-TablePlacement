@@ -158,7 +158,7 @@ MonoBehaviour:
   - {fileID: 4788237224660284685, guid: 04be4b68cef08495f992cf73b6e1f31f, type: 3}
   - {fileID: 5042661689614146094, guid: 5add3c858ccf24a14a09e8e93f11e0fe, type: 3}
   tablePrefab: {fileID: 4977362742177916550, guid: 82c816e83aa75496cb7b4d031cb60a7d, type: 3}
-  levelFilePath: Assets/Resources/data.json
+  jsonFile: {fileID: 4900000, guid: 3cf8d1796d70b4060983d69ec570866a, type: 3}
 --- !u!4 &542438272
 Transform:
   m_ObjectHideFlags: 0
