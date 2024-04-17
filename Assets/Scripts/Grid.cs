@@ -9,30 +9,32 @@ public class Grid : MonoBehaviour
     public GameObject tablePrefab;   // Prefab for the table
     public string levelFilePath;     // Path to the JSON level file
 
-    private int[,] terrainGrid;      // 2D array to store the tile types
+    private List<List<int>> terrainGrid; // List of lists to store the tile types
 
     void Start()
     {
         LoadLevelFromJson();
-        //RenderLevel();
+        RenderLevel();
     }
 
     // Load level data from JSON file
     private void LoadLevelFromJson()
     {
         string json = File.ReadAllText(levelFilePath);
-        LevelData levelData = JsonConvert.DeserializeObject<LevelData>(json);
-        terrainGrid = levelData.TerrainGrid;
+        dynamic jsonData = JsonConvert.DeserializeObject(json);
+        dynamic gridData = jsonData.TerrainGrid.ToObject<List<List<int>>>();//JsonConvert.DeserializeObject<List<List<int>>>(jsonData["TerrainGrid"].ToString());
+
+        terrainGrid = gridData.ToObject<List<List<int>>>();
     }
-    /*
+
     // Render the level based on the tile types
     private void RenderLevel()
     {
-        for (int x = 0; x < terrainGrid.GetLength(0); x++)
+        for (int x = 0; x < terrainGrid.Count; x++)
         {
-            for (int y = 0; y < terrainGrid.GetLength(1); y++)
+            for (int y = 0; y < terrainGrid[x].Count; y++)
             {
-                int tileType = terrainGrid[x, y];
+                int tileType = terrainGrid[x][y];
                 GameObject tilePrefab = tilePrefabs[tileType];
                 Instantiate(tilePrefab, new Vector3(x, 0, y), Quaternion.identity);
             }
@@ -51,7 +53,7 @@ public class Grid : MonoBehaviour
                 int gridX = Mathf.FloorToInt(hit.point.x);
                 int gridZ = Mathf.FloorToInt(hit.point.z);
 
-                if (terrainGrid[gridX, gridZ] == 4 && CanPlaceTable(gridX, gridZ))
+                if (IsValidTablePosition(gridX, gridZ))
                 {
                     PlaceTable(gridX, gridZ);
                 }
@@ -60,13 +62,13 @@ public class Grid : MonoBehaviour
     }
 
     // Check if the table can be placed at the given grid coordinates
-    private bool CanPlaceTable(int x, int z)
+    private bool IsValidTablePosition(int x, int z)
     {
-        if (x + 1 < terrainGrid.GetLength(0) && terrainGrid[x + 1, z] == 4)
+        if (x + 1 < terrainGrid.Count && terrainGrid[x + 1][z] == 4)
         {
             return true; // Horizontal placement
         }
-        else if (z + 1 < terrainGrid.GetLength(1) && terrainGrid[x, z + 1] == 4)
+        else if (z + 1 < terrainGrid[x].Count && terrainGrid[x][z + 1] == 4)
         {
             return true; // Vertical placement
         }
@@ -77,23 +79,11 @@ public class Grid : MonoBehaviour
     private void PlaceTable(int x, int z)
     {
         GameObject newTable = Instantiate(tablePrefab, new Vector3(x + 0.5f, 0, z + 0.5f), Quaternion.identity);
-        if (x + 1 < terrainGrid.GetLength(0) && terrainGrid[x + 1, z] == 4)
+        if (x + 1 < terrainGrid.Count && terrainGrid[x + 1][z] == 4)
         {
             newTable.transform.rotation = Quaternion.Euler(0, 90, 0); // Horizontal placement
         }
     }
-    */
-}
 
-// Class to deserialize JSON level data
-[System.Serializable]
-public class LevelData
-{
-    public int[,] TerrainGrid;
-}
 
-public class TerrainGrid
-{
-    public List<object> Terraingrid { get; set; }
 }
-
