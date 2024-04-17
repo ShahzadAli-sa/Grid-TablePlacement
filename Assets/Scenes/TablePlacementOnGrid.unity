@@ -152,13 +152,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a997187bbedb944c1ac937005c0a2259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jsonFilePath: Assets/Resources/data.json
   tilePrefabs:
   - {fileID: 4003822194275159212, guid: 4812bdffad2674acba747fd405b63246, type: 3}
   - {fileID: 7879467636868888638, guid: 0ee79b63d5b6f49e8969da407b9ee300, type: 3}
   - {fileID: 4788237224660284685, guid: 04be4b68cef08495f992cf73b6e1f31f, type: 3}
   - {fileID: 5042661689614146094, guid: 5add3c858ccf24a14a09e8e93f11e0fe, type: 3}
   tablePrefab: {fileID: 4977362742177916550, guid: 82c816e83aa75496cb7b4d031cb60a7d, type: 3}
-  jsonFile: {fileID: 4900000, guid: 3cf8d1796d70b4060983d69ec570866a, type: 3}
 --- !u!4 &542438272
 Transform:
   m_ObjectHideFlags: 0
@@ -303,7 +303,7 @@ Camera:
   m_GameObject: {fileID: 963194225}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -353,13 +353,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: -0.20284814, y: 0.070823506, z: -0.27198723, w: 0.93800837}
+  m_LocalPosition: {x: 4.36, y: 4.92, z: -5.57}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -20, y: 15, z: -35}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

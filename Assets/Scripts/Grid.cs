@@ -10,6 +10,7 @@ public class LevelLoader : MonoBehaviour
 
     private TileType[,] terrainGrid;
 
+
     private void Start()
     {
         
@@ -47,6 +48,7 @@ public class LevelLoader : MonoBehaviour
 
     private Vector3 GridToWorldPosition(int x, int y)
     {
+        
         // Convert grid coordinates to world position
         // You need to implement this based on your isometric grid layout
         // This is just a placeholder implementation
@@ -99,8 +101,8 @@ public enum TileType
 {
     Dirt = 0,
     Grass = 1,
-    Stone = 3,
-    Wood = 4
+    Stone = 2,
+    Wood = 3
 }
 
 [System.Serializable]
