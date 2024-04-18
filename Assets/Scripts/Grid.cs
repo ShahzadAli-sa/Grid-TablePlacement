@@ -57,15 +57,16 @@ public class LevelLoader : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        //if (Input.GetMouseButtonDown(0))
         {
             Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2Int gridPosition = ConvertToGridPosition(clickPosition);
-
-            if (IsValidWoodTile(gridPosition) && HasSpaceForTable(gridPosition))
-            {
-                PlaceTable(gridPosition);
-            }
+            Debug.Log($"clickPosition {clickPosition}");
+            //Vector2Int gridPosition = ConvertToGridPosition(clickPosition);
+            //Debug.Log($"Click gridPosition {gridPosition}");
+            //if (IsValidWoodTile(gridPosition) && HasSpaceForTable(gridPosition))
+            //{
+            //    PlaceTable(gridPosition);
+            //}
         }
     }
 
@@ -93,7 +94,7 @@ public class LevelLoader : MonoBehaviour
         // Convert world position to grid coordinates
         // You need to implement this based on your isometric grid layout
         // This is just a placeholder implementation
-        return new Vector2Int((int)position.x, (int)position.z);
+        return new Vector2Int((int)position.x, (int)position.y);
     }
 }
 
