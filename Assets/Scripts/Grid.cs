@@ -57,16 +57,16 @@ public class LevelLoader : MonoBehaviour
 
     private void Update()
     {
-        //if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
             Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Debug.Log($"clickPosition {clickPosition}");
-            //Vector2Int gridPosition = ConvertToGridPosition(clickPosition);
-            //Debug.Log($"Click gridPosition {gridPosition}");
-            //if (IsValidWoodTile(gridPosition) && HasSpaceForTable(gridPosition))
-            //{
-            //    PlaceTable(gridPosition);
-            //}
+            Vector2Int gridPosition = ConvertToGridPosition(clickPosition);
+            Debug.Log($"Click gridPosition {gridPosition}");
+            if (IsValidWoodTile(gridPosition) && HasSpaceForTable(gridPosition))
+            {
+                PlaceTable(gridPosition);
+            }
         }
     }
 
