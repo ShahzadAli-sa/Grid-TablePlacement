@@ -171,12 +171,14 @@ private bool IsPositionOccupiedByTable(Vector2 tilePosition)
                  newTable = Instantiate(tableHorizontalPrefab, tablePosition, Quaternion.identity);
         break;
             case "Left":
+                tablePosition.x -= 1;
                  newTable = Instantiate(tableHorizontalPrefab, tablePosition, Quaternion.identity);
         break;
             case "Up":
                  newTable = Instantiate(tableVerticalPrefab, tablePosition, Quaternion.identity);
         break;
             case "Down":
+                tablePosition.y -= 1;
                  newTable = Instantiate(tableVerticalPrefab, tablePosition, Quaternion.identity);
         break;
 
