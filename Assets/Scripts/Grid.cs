@@ -1,39 +1,43 @@
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 
-public class LevelLoader : MonoBehaviour
+public class Grid : MonoBehaviour
 {
     public string jsonFilePath = "Assets/Resources/data.json"; // Path to your JSON file
     public GameObject[] tilePrefabs; // Array of tile prefabs (Dirt, Grass, Stone, Wood)
-    public GameObject tablePrefab;
+    public GameObject tableHorizontalPrefab;
+    public GameObject tableVerticalPrefab;
 
     private TileType[,] terrainGrid;
 
+    public List<Tile> tilesList;
+    string tableDirection;
 
     private void Start()
     {
-        
-        LoadLevel(jsonFilePath);
-        RenderLevel();
+        GridLoader(jsonFilePath);
+        RenderGrid();
     }
 
-    private void LoadLevel(string filePath)
+    private void GridLoader(string filePath)
     {
         string jsonString = File.ReadAllText(filePath);
-        LevelData levelData = JsonConvert.DeserializeObject<LevelData>(jsonString);
-        terrainGrid = new TileType[levelData.TerrainGrid.GetLength(0), levelData.TerrainGrid.GetLength(1)];
+        GridData gridData = JsonConvert.DeserializeObject<GridData>(jsonString);
+        terrainGrid = new TileType[gridData.TerrainGrid.GetLength(0), gridData.TerrainGrid.GetLength(1)];
 
-        for (int i = 0; i < levelData.TerrainGrid.GetLength(0); i++)
+        for (int i = 0; i < gridData.TerrainGrid.GetLength(0); i++)
         {
-            for (int j = 0; j < levelData.TerrainGrid.GetLength(1); j++)
+            for (int j = 0; j < gridData.TerrainGrid.GetLength(1); j++)
             {
-                terrainGrid[i, j] = (TileType)levelData.TerrainGrid[i, j].TileType;
+                terrainGrid[i, j] = (TileType)gridData.TerrainGrid[i, j].TileType;
             }
         }
     }
 
-    private void RenderLevel()
+    private void RenderGrid()
     {
         for (int i = 0; i < terrainGrid.GetLength(0); i++)
         {
@@ -42,6 +46,10 @@ public class LevelLoader : MonoBehaviour
                 Vector3 position = GridToWorldPosition(i, j);
                 GameObject tilePrefab = tilePrefabs[(int)terrainGrid[i, j]];
                 Instantiate(tilePrefab, position, Quaternion.identity);
+                if (terrainGrid[i, j] == TileType.Wood)
+                {
+                    tilesList.Add(tilePrefab.GetComponent<Tile>());
+                }
             }
         }
     }
@@ -59,15 +67,22 @@ public class LevelLoader : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Vector3 clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Debug.Log($"clickPosition {clickPosition}");
-            Vector2Int gridPosition = ConvertToGridPosition(clickPosition);
-            Debug.Log($"Click gridPosition {gridPosition}");
-            if (IsValidWoodTile(gridPosition) && HasSpaceForTable(gridPosition))
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
             {
-                PlaceTable(gridPosition);
+                Vector3 clickPosition = hit.transform.position;
+                Vector2Int gridPosition = ConvertToGridPosition(clickPosition);
+                if (IsValidWoodTile(gridPosition) && HasSpaceForTable(gridPosition))
+                {
+                    PlaceTable(gridPosition);
+                }
+                
             }
+
         }
+
     }
 
     private bool IsValidWoodTile(Vector2Int gridPosition)
@@ -77,16 +92,96 @@ public class LevelLoader : MonoBehaviour
 
     private bool HasSpaceForTable(Vector2Int gridPosition)
     {
-        // Check if there is enough space for the table at gridPosition
-        // You need to implement this based on your grid layout
-        return true; // Placeholder return value
+        // Check if the clicked tile is of the 'Wood' type
+        if (terrainGrid[gridPosition.x, gridPosition.y] != TileType.Wood)
+        {
+            return false; // Table can only be placed on tiles of the 'Wood' type
+        }
+
+        // Check if there is enough space horizontally for a table
+        if (gridPosition.x + 1 < terrainGrid.GetLength(0) &&
+            terrainGrid[gridPosition.x + 1, gridPosition.y] == TileType.Wood)
+        {
+            // Check if the position is not occupied by another table
+            if (!IsPositionOccupiedByTable(gridPosition) &&
+                !IsPositionOccupiedByTable(new Vector2Int(gridPosition.x + 1, gridPosition.y)))
+            {
+                tableDirection = "Right";
+                return true; // Horizontal table can be placed here
+            }
+        }
+
+        // Check if there is enough space horizontally for a table
+        if (gridPosition.x > 0 &&
+            terrainGrid[gridPosition.x - 1, gridPosition.y] == TileType.Wood)
+        {
+            // Check if the position is not occupied by another table
+            if (!IsPositionOccupiedByTable(gridPosition) &&
+                !IsPositionOccupiedByTable(new Vector2Int(gridPosition.x - 1, gridPosition.y)))
+            {
+                tableDirection = "Left";
+                return true; // Horizontal table can be placed here
+            }
+        }
+
+        // Check if there is enough space vertically for a table
+        if (gridPosition.y + 1 < terrainGrid.GetLength(1) &&
+            terrainGrid[gridPosition.x, gridPosition.y + 1] == TileType.Wood)
+        {
+            // Check if the position is not occupied by another table
+            if (!IsPositionOccupiedByTable(gridPosition) &&
+                !IsPositionOccupiedByTable(new Vector2Int(gridPosition.x, gridPosition.y + 1)))
+            {
+                tableDirection = "Up";
+                return true; // Vertical table can be placed here
+            }
+        }
+
+        // Check if there is enough space vertically for a table
+        if (gridPosition.y > 0 &&
+            terrainGrid[gridPosition.x, gridPosition.y - 1] == TileType.Wood)
+        {
+            // Check if the position is not occupied by another table
+            if (!IsPositionOccupiedByTable(gridPosition) &&
+                !IsPositionOccupiedByTable(new Vector2Int(gridPosition.x, gridPosition.y - 1)))
+            {
+                tableDirection = "Down";
+                return true; // Vertical table can be placed here
+            }
+        }
+
+        return false; // Insufficient space or position occupied by another table
+    }
+
+ 
+
+private bool IsPositionOccupiedByTable(Vector2 tilePosition)
+    {
+        return false; ;
     }
 
     private void PlaceTable(Vector2Int gridPosition)
     {
         Vector3 tablePosition = GridToWorldPosition(gridPosition.x, gridPosition.y);
-        GameObject newTable = Instantiate(tablePrefab, tablePosition, Quaternion.identity);
-        // Optionally, you can store placed tables in a list for further manipulation
+        GameObject newTable;
+
+        switch (tableDirection)
+        {
+            case "Right":
+                 newTable = Instantiate(tableHorizontalPrefab, tablePosition, Quaternion.identity);
+        break;
+            case "Left":
+                 newTable = Instantiate(tableHorizontalPrefab, tablePosition, Quaternion.identity);
+        break;
+            case "Up":
+                 newTable = Instantiate(tableVerticalPrefab, tablePosition, Quaternion.identity);
+        break;
+            case "Down":
+                 newTable = Instantiate(tableVerticalPrefab, tablePosition, Quaternion.identity);
+        break;
+
+    }
+        
     }
 
     private Vector2Int ConvertToGridPosition(Vector3 position)
@@ -107,7 +202,7 @@ public enum TileType
 }
 
 [System.Serializable]
-public class LevelData
+public class GridData
 {
     public GridCellData[,] TerrainGrid;
 }
