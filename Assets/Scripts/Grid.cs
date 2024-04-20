@@ -12,14 +12,18 @@ public class Grid : MonoBehaviour
     public GameObject tableVerticalPrefab;
 
     private TileType[,] terrainGrid;
+    private bool[,] tileOccupiedStatus; // Track the occupied status of each tile
 
-    public List<Tile> tilesList;
+
+    // public List<Tile> tilesList;
     string tableDirection;
 
     private void Start()
     {
         GridLoader(jsonFilePath);
         RenderGrid();
+        InitializeTileOccupiedStatus();
+
     }
 
     private void GridLoader(string filePath)
@@ -46,10 +50,10 @@ public class Grid : MonoBehaviour
                 Vector3 position = GridToWorldPosition(i, j);
                 GameObject tilePrefab = tilePrefabs[(int)terrainGrid[i, j]];
                 Instantiate(tilePrefab, position, Quaternion.identity);
-                if (terrainGrid[i, j] == TileType.Wood)
-                {
-                    tilesList.Add(tilePrefab.GetComponent<Tile>());
-                }
+                //if (terrainGrid[i, j] == TileType.Wood)
+                //{
+                //    tilesList.Add(tilePrefab.GetComponent<Tile>());
+                //}
             }
         }
     }
@@ -109,6 +113,10 @@ public class Grid : MonoBehaviour
                 tableDirection = "Right";
                 return true; // Horizontal table can be placed here
             }
+            else
+            {
+                Debug.Log("Tiles are occupied");
+            }
         }
 
         // Check if there is enough space horizontally for a table
@@ -121,6 +129,10 @@ public class Grid : MonoBehaviour
             {
                 tableDirection = "Left";
                 return true; // Horizontal table can be placed here
+            }
+            else
+            {
+                Debug.Log("Tiles are occupied");
             }
         }
 
@@ -135,6 +147,10 @@ public class Grid : MonoBehaviour
                 tableDirection = "Up";
                 return true; // Vertical table can be placed here
             }
+            else
+            {
+                Debug.Log("Tiles are occupied");
+            }
         }
 
         // Check if there is enough space vertically for a table
@@ -148,6 +164,10 @@ public class Grid : MonoBehaviour
                 tableDirection = "Down";
                 return true; // Vertical table can be placed here
             }
+            else
+            {
+                Debug.Log("Tiles are occupied");
+            }
         }
 
         return false; // Insufficient space or position occupied by another table
@@ -157,30 +177,43 @@ public class Grid : MonoBehaviour
 
 private bool IsPositionOccupiedByTable(Vector2 tilePosition)
     {
-        return false; ;
+
+       return tileOccupiedStatus[(int)tilePosition.x, (int)tilePosition.y];
+
     }
 
     private void PlaceTable(Vector2Int gridPosition)
     {
+        
         Vector3 tablePosition = GridToWorldPosition(gridPosition.x, gridPosition.y);
         GameObject newTable;
+        tileOccupiedStatus[gridPosition.x, gridPosition.y] = true;
+
+        Debug.Log("tableDirection...."+tableDirection);
 
         switch (tableDirection)
         {
             case "Right":
-                 newTable = Instantiate(tableHorizontalPrefab, tablePosition, Quaternion.identity);
-        break;
+                 newTable = Instantiate(tableHorizontalPrefab, tablePosition, Quaternion.identity);// Set the tiles as occupied by the table
+                tileOccupiedStatus[gridPosition.x + 1, gridPosition.y] = true; // Assuming the table is placed horizontally
+                break;
             case "Left":
                 tablePosition.x -= 1;
                  newTable = Instantiate(tableHorizontalPrefab, tablePosition, Quaternion.identity);
-        break;
+                tileOccupiedStatus[gridPosition.x - 1, gridPosition.y] = true; // Assuming the table is placed horizontally
+
+                break;
             case "Up":
                  newTable = Instantiate(tableVerticalPrefab, tablePosition, Quaternion.identity);
-        break;
+                tileOccupiedStatus[gridPosition.x, gridPosition.y+1] = true; // Assuming the table is placed vertically
+
+                break;
             case "Down":
                 tablePosition.y -= 1;
                  newTable = Instantiate(tableVerticalPrefab, tablePosition, Quaternion.identity);
-        break;
+                tileOccupiedStatus[gridPosition.x, gridPosition.y - 1] = true; // Assuming the table is placed vertically
+
+                break;
 
     }
         
@@ -192,6 +225,19 @@ private bool IsPositionOccupiedByTable(Vector2 tilePosition)
         // You need to implement this based on your isometric grid layout
         // This is just a placeholder implementation
         return new Vector2Int((int)position.x, (int)position.y);
+    }
+
+    private void InitializeTileOccupiedStatus()
+    {
+        tileOccupiedStatus = new bool[terrainGrid.GetLength(0), terrainGrid.GetLength(1)];
+        // Initialize all tiles as unoccupied initially
+        for (int i = 0; i < terrainGrid.GetLength(0); i++)
+        {
+            for (int j = 0; j < terrainGrid.GetLength(1); j++)
+            {
+                tileOccupiedStatus[i, j] = false;
+            }
+        }
     }
 }
 
