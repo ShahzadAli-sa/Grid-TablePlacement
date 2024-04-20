@@ -1,31 +1,32 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GridSystem
 {
     public class GridInteraction : MonoBehaviour
     {
-        public GridLoader gridLoader;
-        public GridRenderer gridRenderer;
-        public GameObject tableHorizontalPrefab;
-        public GameObject tableVerticalPrefab;
+        public GridLoader GridLoader;
+        public GridRenderer GridRenderer;
+        public GameObject TableHorizontalPrefab;
+        public GameObject TableVerticalPrefab;
 
-        private TablePlacementValidator placementValidator;
-        private TablePlacer tablePlacer;
+        private TablePlacementValidator _placementValidator;
+        private TablePlacer _tablePlacer;
 
-        TileType[,] terrainGrid;
+        TileType[,] _terrainGrid;
 
         private void Start()
         {
-            gridLoader.OnGridLoaded += HandleGridLoaded;
-            placementValidator = new TablePlacementValidator();
-            tablePlacer = new TablePlacer(tableHorizontalPrefab, tableVerticalPrefab);
-            gridLoader.LoadGridData();
+            GridLoader.OnGridLoaded += HandleGridLoaded;
+            _placementValidator = new TablePlacementValidator();
+            _tablePlacer = new TablePlacer(TableHorizontalPrefab, TableVerticalPrefab);
+            GridLoader.LoadGridData();
         }
 
         private void HandleGridLoaded(TileType[,] terrainGrid)
         {
-            this.terrainGrid = terrainGrid;
-            gridRenderer.RenderGrid(terrainGrid);
+            this._terrainGrid = terrainGrid;
+            GridRenderer.RenderGrid(terrainGrid);
         }
 
         private void Update()
@@ -39,10 +40,10 @@ namespace GridSystem
                 {
                     Vector3 clickPosition = hit.transform.position;
                     Vector2Int gridPosition = ConvertToGridPosition(clickPosition);
-                    if (placementValidator.IsValidWoodTile(terrainGrid[gridPosition.x, gridPosition.y]) &&
-                        placementValidator.HasSpaceForTable(gridPosition, terrainGrid, gridRenderer.tileOccupiedStatus, out string direction))
+                    if (_placementValidator.IsValidWoodTile(_terrainGrid[gridPosition.x, gridPosition.y]) &&
+                        _placementValidator.HasSpaceForTable(gridPosition, _terrainGrid, GridRenderer.TileOccupiedStatus, out string direction))
                     {
-                        tablePlacer.PlaceTable(gridPosition,terrainGrid,gridRenderer.tileOccupiedStatus,direction);
+                        _tablePlacer.PlaceTable(gridPosition,_terrainGrid,GridRenderer.TileOccupiedStatus,direction);
                     }
 
                 }
@@ -54,6 +55,15 @@ namespace GridSystem
         {
             // Convert world position to grid coordinates
             return new Vector2Int((int)position.x, (int)position.y);
+        }
+
+        public void RestartLevel()
+        {
+            // Get the name of the currently active scene
+            string sceneName = SceneManager.GetActiveScene().name;
+
+            // Reload the scene by its name
+            SceneManager.LoadScene(sceneName);
         }
 
     }

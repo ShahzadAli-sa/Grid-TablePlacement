@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -7,38 +8,41 @@ namespace GridSystem
 {
     public class GridLoader : MonoBehaviour
     {
-        public string jsonFilePath = "Assets/Resources/data.json"; // Path to your JSON file
+        public string JsonFilePath = "Assets/Resources/data.json"; // Path to your JSON file
 
         public event Action<TileType[,]> OnGridLoaded; // Event to notify when grid data is loaded
        
-        TileType[,] terrainGrid;
+        TileType[,] _terrainGrid;
+       
         public void LoadGridData()
         {
-            string jsonString = File.ReadAllText(jsonFilePath);
-            GridData gridData = JsonConvert.DeserializeObject<GridData>(jsonString);
-            terrainGrid = new TileType[gridData.TerrainGrid.GetLength(0), gridData.TerrainGrid.GetLength(1)];
-
-            for (int i = 0; i < gridData.TerrainGrid.GetLength(0); i++)
+            string jsonString = File.ReadAllText(JsonFilePath);
+            GridDataList gridData = JsonConvert.DeserializeObject<GridDataList>(jsonString);
+            _terrainGrid = new TileType[gridData.Terraingrid.Count, gridData.Terraingrid[0].Count];
+            
+            for (int i = 0; i < gridData.Terraingrid.Count; i++)
             {
-                for (int j = 0; j < gridData.TerrainGrid.GetLength(1); j++)
+                for (int j = 0; j < gridData.Terraingrid[0].Count; j++)
                 {
-                    terrainGrid[i, j] = (TileType)gridData.TerrainGrid[i, j].TileType;
+                    _terrainGrid[i, j] = (TileType)gridData.Terraingrid[i][j].TileType;
                 }
             }
-            OnGridLoaded?.Invoke(terrainGrid);
+            OnGridLoaded?.Invoke(_terrainGrid);
         }
     }
 
-    [System.Serializable]
-    public class GridData
-    {
-        public GridCellData[,] TerrainGrid;
-    }
-
+    
     [System.Serializable]
     public class GridCellData
     {
         public int TileType;
     }
+
+    public class GridDataList
+    {
+        public List<List<GridCellData>> Terraingrid { get; set; }
+    }
+
+  
 
 }

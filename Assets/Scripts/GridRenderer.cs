@@ -5,8 +5,8 @@ namespace GridSystem
     public class GridRenderer : MonoBehaviour
     {
         
-        public GameObject[] tilePrefabs; // Array of tile prefabs (Dirt, Grass, Stone, Wood)
-        public bool[,] tileOccupiedStatus; // Track the occupied status of each tile
+        public GameObject[] TilePrefabs; // Array of tile prefabs (Dirt, Grass, Stone, Wood)
+        public bool[,] TileOccupiedStatus; // Track the occupied status of each tile
 
         public void RenderGrid(TileType[,] terrainGrid)
         {
@@ -15,7 +15,7 @@ namespace GridSystem
                 for (int j = 0; j < terrainGrid.GetLength(1); j++)
                 {
                     Vector3 position = GridToWorldPosition(i, j);
-                    GameObject tilePrefab = tilePrefabs[(int)terrainGrid[i, j]];
+                    GameObject tilePrefab = TilePrefabs[(int)terrainGrid[i, j]];
                     Instantiate(tilePrefab, position, Quaternion.identity);
                     InitializeTileOccupiedStatus(terrainGrid);
                 }
@@ -30,13 +30,13 @@ namespace GridSystem
 
         private void InitializeTileOccupiedStatus(TileType[,] terrainGrid)
         {
-            tileOccupiedStatus = new bool[terrainGrid.GetLength(0), terrainGrid.GetLength(1)];
+            TileOccupiedStatus = new bool[terrainGrid.GetLength(0), terrainGrid.GetLength(1)];
             // Initialize all tiles as unoccupied initially
             for (int i = 0; i < terrainGrid.GetLength(0); i++)
             {
                 for (int j = 0; j < terrainGrid.GetLength(1); j++)
                 {
-                    tileOccupiedStatus[i, j] = false;
+                    TileOccupiedStatus[i, j] = false;
                 }
             }
         }

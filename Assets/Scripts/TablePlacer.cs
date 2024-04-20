@@ -4,13 +4,13 @@ namespace GridSystem
 {
     public class TablePlacer : MonoBehaviour
     {
-        private GameObject tableHorizontalPrefab;
-        private GameObject tableVerticalPrefab;
+        private GameObject _tableHorizontalPrefab;
+        private GameObject _tableVerticalPrefab;
 
         public TablePlacer(GameObject tableHorizontalPrefab, GameObject tableVerticalPrefab)
         {
-            this.tableHorizontalPrefab = tableHorizontalPrefab;
-            this.tableVerticalPrefab = tableVerticalPrefab;
+            this._tableHorizontalPrefab = tableHorizontalPrefab;
+            this._tableVerticalPrefab = tableVerticalPrefab;
         }
 
         public void PlaceTable(Vector2Int gridPosition, TileType[,] terrainGrid, bool[,] tileOccupiedStatus, string direction)
@@ -20,27 +20,27 @@ namespace GridSystem
             switch (direction)
             {
                 case "Right":
-                    Instantiate(tableHorizontalPrefab, tablePosition, Quaternion.identity);
+                    Instantiate(_tableHorizontalPrefab, tablePosition, Quaternion.identity);
                     // Set the tiles as occupied by the table
                     tileOccupiedStatus[gridPosition.x, gridPosition.y] = true;
                     tileOccupiedStatus[gridPosition.x + 1, gridPosition.y] = true;
                     break;
                 case "Left":
                     tablePosition.x -= 1;
-                    Instantiate(tableHorizontalPrefab, tablePosition, Quaternion.identity);
+                    Instantiate(_tableHorizontalPrefab, tablePosition, Quaternion.identity);
                     // Set the tiles as occupied by the table
                     tileOccupiedStatus[gridPosition.x, gridPosition.y] = true;
                     tileOccupiedStatus[gridPosition.x - 1, gridPosition.y] = true;
                     break;
                 case "Up":
-                    Instantiate(tableVerticalPrefab, tablePosition, Quaternion.identity);
+                    Instantiate(_tableVerticalPrefab, tablePosition, Quaternion.identity);
                     // Set the tiles as occupied by the table
                     tileOccupiedStatus[gridPosition.x, gridPosition.y] = true;
                     tileOccupiedStatus[gridPosition.x, gridPosition.y + 1] = true;
                     break;
                 case "Down":
                     tablePosition.y -= 1;
-                    Instantiate(tableVerticalPrefab, tablePosition, Quaternion.identity);
+                    Instantiate(_tableVerticalPrefab, tablePosition, Quaternion.identity);
                     // Set the tiles as occupied by the table
                     tileOccupiedStatus[gridPosition.x, gridPosition.y] = true;
                     tileOccupiedStatus[gridPosition.x, gridPosition.y - 1] = true;
