@@ -555,7 +555,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.21972941, g: 0.21972941, b: 0.4792453, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -605,7 +605,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: -0.20284814, y: 0.070823506, z: -0.27198723, w: 0.93800837}
-  m_LocalPosition: {x: 4.36, y: 4.92, z: -5.57}
+  m_LocalPosition: {x: 3.63, y: 4.92, z: -6.69}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -719,7 +719,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0237eb865c8a21141b6835f079025e97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JsonFilePath: Assets/Resources/data.json
+  JsonFile: {fileID: 4900000, guid: 3cf8d1796d70b4060983d69ec570866a, type: 3}
 --- !u!4 &1122435367
 Transform:
   m_ObjectHideFlags: 0
