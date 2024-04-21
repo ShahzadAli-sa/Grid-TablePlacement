@@ -20,7 +20,6 @@ namespace GridSystem
         }
         public void LoadGridData()
         {
-           // string jsonString = File.ReadAllText(_jsonFileText);
             GridDataList gridData = JsonConvert.DeserializeObject<GridDataList>(_jsonFileText);
             _terrainGrid = new TileType[gridData.Terraingrid.Count, gridData.Terraingrid[0].Count];
             
