@@ -8,16 +8,20 @@ namespace GridSystem
 {
     public class GridLoader : MonoBehaviour
     {
-        public string JsonFilePath = "Assets/Resources/data.json"; // Path to your JSON file
+        public TextAsset JsonFile;  // Json File
+        private string _jsonFileText;
 
         public event Action<TileType[,]> OnGridLoaded; // Event to notify when grid data is loaded
        
         TileType[,] _terrainGrid;
-       
+        private void Start()
+        {
+            _jsonFileText = JsonFile.text;
+        }
         public void LoadGridData()
         {
-            string jsonString = File.ReadAllText(JsonFilePath);
-            GridDataList gridData = JsonConvert.DeserializeObject<GridDataList>(jsonString);
+           // string jsonString = File.ReadAllText(_jsonFileText);
+            GridDataList gridData = JsonConvert.DeserializeObject<GridDataList>(_jsonFileText);
             _terrainGrid = new TileType[gridData.Terraingrid.Count, gridData.Terraingrid[0].Count];
             
             for (int i = 0; i < gridData.Terraingrid.Count; i++)
