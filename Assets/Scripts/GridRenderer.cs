@@ -17,9 +17,10 @@ namespace GridSystem
                     Vector3 position = GridToWorldPosition(i, j);
                     GameObject tilePrefab = TilePrefabs[(int)terrainGrid[i, j]];
                     Instantiate(tilePrefab, position, Quaternion.identity);
-                    InitializeTileOccupiedStatus(terrainGrid);
                 }
             }
+            InitializeTileOccupiedStatus(terrainGrid);
+
         }
 
         private Vector3 GridToWorldPosition(int x, int y)
